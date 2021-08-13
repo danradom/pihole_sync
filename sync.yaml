@@ -1,0 +1,92 @@
+#!/usr/bin/env ansible-playbook
+#
+
+---
+- hosts: pihole
+  vars:
+    date: "{{ lookup('pipe','date +%Y.%m.%d.%H.%M') }}"
+    pwd: "{{ lookup('env', 'PWD') }}"
+  become: yes
+  become_user: root
+
+
+  tasks:
+
+
+   - name: backup gravity.db
+     shell: sqlite3 /etc/pihole/gravity.db ".backup gravity.backup-{{ date }}"
+     register: adlist
+     delegate_to: ph1
+     run_once: true
+     ignore_errors: yes
+
+
+   - name: dump gravity.db
+     shell: sqlite3 /etc/pihole/gravity.db -header -csv ".dump" > gravity.dump-{{ date }}
+     register: dump
+     delegate_to: ph1
+     run_once: true
+
+
+   - name: fetch db backup
+     fetch:
+       src: /home/dr/gravity.backup-{{ date }}
+       dest: backup/gravity.backup-{{ date }}
+       flat: yes
+     delegate_to: ph1
+     run_once: true
+
+
+   - name: fetch db dump
+     fetch:
+       src: /home/dr/gravity.dump-{{ date }}
+       dest: backup/gravity.dump-{{ date }}
+       flat: yes
+     delegate_to: ph1
+     run_once: true
+
+
+   - name: copy db dump
+     copy:
+       src: backup/gravity.dump-{{ date }}
+       dest: /tmp/gravity.dump-{{ date }}
+     when: ansible_hostname != "ph1"
+
+
+   - name: nuke existing gravity db
+     file:
+       path: /etc/pihole/gravity.db
+       state: absent
+     when: ansible_hostname != "ph1"
+
+
+   - name: restore gravity.db
+     shell: cat /tmp/gravity.dump-{{ date }} | sqlite3 /etc/pihole/gravity.db
+     when: ansible_hostname != "ph1"
+     ignore_errors: yes
+
+
+   - name: update custom.list dns records
+     copy:
+       src: '{{ pwd }}/{{ inventory_hostname }}'
+       dest: /etc/pihole/custom.list
+       backup: yes
+
+
+   - name: restart dns
+     command: pihole -g
+
+
+   - name: find tmp files
+     find:
+       paths: "/tmp"
+       recurse: yes
+       patterns: "gravity.*"
+     register: tmp_file
+
+
+   - name: remove tmp files
+     file:
+       path: "{{ item.path }}"
+       state: absent
+     with_items: "{{ tmp_file.files }}"
