@@ -8,6 +8,11 @@
 - These lists can be unique per server or all the same as it uses inventory_hostname as the source file.
 - Maintain a master and use symlinks to keey them all the same or use unique files to keep them all unique.
 
+#### Backup database
+- Creates both a sqlite3 backup and dump copy of the gravity database for archival.
+
+
+
 ```
 dr@admin:sync $ ls -l
 total 12
