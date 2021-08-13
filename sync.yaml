@@ -5,7 +5,6 @@
 - hosts: pihole
   vars:
     date: "{{ lookup('pipe','date +%Y.%m.%d.%H.%M') }}"
-    pwd: "{{ lookup('env', 'PWD') }}"
   become: yes
   become_user: root
 
