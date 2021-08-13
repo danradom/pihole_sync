@@ -13,9 +13,9 @@ dr@admin:sync $ ls -l
 total 12
 drwxr-xr-x 2 dr dr 4096 Aug 13 12:09 backup
 -rw-r--r-- 1 dr dr 1461 Aug 13 12:09 local-dns
-lrwxrwxrwx 1 dr dr    3 Aug 12 21:34 ph-mgmt -> ph1
+lrwxrwxrwx 1 dr dr    9 Aug 13 12:57 ph-mgmt -> local-dns
 lrwxrwxrwx 1 dr dr    9 Aug 13 10:44 ph1 -> local-dns
-lrwxrwxrwx 1 dr dr    3 Aug 11 15:37 ph2 -> ph1
+lrwxrwxrwx 1 dr dr    9 Aug 13 12:57 ph2 -> local-dns
 -rwx------ 1 dr dr 1909 Aug 13 12:08 sync.yaml
 ```
 
