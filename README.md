@@ -25,6 +25,15 @@ lrwxrwxrwx 1 dr dr    9 Aug 13 12:57 ph2 -> local-dns
 ```
 
 ```
+dr@admin: $ cat local-dns
+172.16.21.11 ph1
+172.16.31.11 ph2
+172.16.51.100 camera1
+172.16.51.101 camera2
+```
+
+
+```
 dr@admin: $ cat ansible.inventory
 [pihole]
 ph1
